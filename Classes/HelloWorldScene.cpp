@@ -24,6 +24,7 @@
 
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
+#include "cocos2d.h"
 
 USING_NS_CC;
 
@@ -46,6 +47,8 @@ bool HelloWorld::init()
     // 1. super init first
     if ( !Scene::init() )
     {
+
+
         return false;
     }
 
@@ -114,7 +117,20 @@ bool HelloWorld::init()
 
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
+
+		//update
+		this->scheduleUpdate();
+
     }
+
+	// create sprite 
+	avator= Sprite::create("avator.png");
+
+	//opretations of sprite
+	avator->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y -100));
+	avator->setScale(0.25f);
+
+	this->addChild(avator,0);
     return true;
 }
 
@@ -130,4 +146,11 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
     //_eventDispatcher->dispatchEvent(&customEndEvent);
 
 
+}
+
+void HelloWorld::update(float delta)
+{
+	Vec2 pos = avator->getPosition();
+	pos += Vec2(1.0f, 1.0f);
+	avator->setPosition(pos);
 }

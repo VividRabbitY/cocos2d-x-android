@@ -37,6 +37,10 @@ public:
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
     
+	void update(float delta) override;
+
+	//sprite
+	cocos2d::Sprite* avator;
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 };
