@@ -52,7 +52,7 @@ bool HelloWorld::init()
         return false;
     }
 
-    auto visibleSize = Director::getInstance()->getVisibleSize();
+     visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
     /////////////////////////////
@@ -127,10 +127,44 @@ bool HelloWorld::init()
 	avator= Sprite::create("avator.png");
 
 	//opretations of sprite
-	avator->setPosition(Vec2(visibleSize.width / 2 + origin.x, visibleSize.height / 2 + origin.y -100));
+	avator->setPosition(Vec2((visibleSize.width/4)*3 + origin.x, (visibleSize.height / 4)*3 ));
 	avator->setScale(0.25f);
 
+	velocity = Vec2(-1.0f, 0.0f);
+	speed = 1.0f;
+	timer = 0.0f;
+
+	movetype = 0;
+
 	this->addChild(avator,0);
+
+	spriteSize = 6;
+	framePerSecend = 30;
+
+	//player sprite
+	player = Sprite::create("player_run.png");
+	playerframesize = player->getContentSize().width / spriteSize;
+	nowframe = 0;
+
+	player->setPosition(Vec2((visibleSize.width / 3) + origin.x, (visibleSize.height / 4) + origin.y));
+	//player->setPosition(Vec2(0,0));
+
+	player->setTextureRect(Rect(0,0,playerframesize,playerframesize));
+	player->getTexture()->setAliasTexParameters();
+	player->setScale(8.0f);
+	this->addChild(player,0);
+
+
+
+	//lazer
+	lazer = Sprite::create();
+	lazer->setTextureRect(Rect(0, 0, 1, 1));
+	lazer->setColor(Color3B(255, 255, 0));
+	lazer->setVisible(false);
+	this->addChild(lazer, 0);
+
+	lazerScale = 0.0f;
+	lazerState = 0;
     return true;
 }
 
@@ -148,9 +182,118 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
 
 }
 
+
 void HelloWorld::update(float delta)
 {
-	Vec2 pos = avator->getPosition();
-	pos += Vec2(1.0f, 1.0f);
-	avator->setPosition(pos);
+	timer += delta;
+	nowframe++;
+
+	Vec2 pos = player->getPosition();
+	pos += velocity*speed;
+	
+	////bound
+	//if (pos.x > visibleSize.width||pos.x<0)
+	//{
+	//	velocity.x = -velocity.x;
+	//}
+	//if (pos.y > visibleSize.height || pos.y < 0)
+	//{
+	//	velocity.y = -velocity.y;
+	//}
+	////alpha
+	//if (timer < 5.0f)
+	//{
+	//	int opa = avator->getOpacity();
+	//	opa--;
+	//	avator->setOpacity(opa);
+	//}
+	//round
+	if (timer > 2.0f)
+	{
+		timer = 0;
+		movetype++;
+	}
+	if (movetype > 3)
+	{
+		movetype = 0;
+	}
+
+	switch (movetype)
+	{
+	case 0:
+		lazerState = 0;
+		lazerScale = 0.0f;
+		velocity = Vec2(1.5f, 0.0f);
+		player->setFlippedX(false);
+		player->setTextureRect(Rect(nowframe % 60 / 10 * playerframesize, 0, playerframesize, playerframesize));
+		lazer->setVisible(false);
+		break;
+	case 1:
+
+		if (lazerState == 0)
+		{
+			lazerScale += 4.0f;
+		}
+		else if(lazerState==1)
+		{
+			lazerScale -= 1.0f;
+		}
+		if (lazerScale > 60.0f)
+		{
+			lazerState = 1;
+		}
+		if(lazerScale<0)
+		{
+			lazerScale = 0;
+		}
+		lazer->setVisible(true);
+		lazer->setAnchorPoint(Vec2(0.0f, 0.5f));
+		velocity = Vec2(0.0f, 0.0f);
+		lazer->setPosition(pos + Vec2(32.0f,0.0f));
+		lazer->setScaleX(500.0f);
+		lazer->setScaleY(lazerScale);
+		break;
+	case 2:
+		lazerState = 0;
+		lazerScale = 0.0f;
+		velocity = Vec2(-1.5f, 0.0f);
+		player->setFlippedX(true);
+		player->setTextureRect(Rect(nowframe % 60 / 10 * playerframesize, 0, playerframesize, playerframesize));
+		lazer->setVisible(false);
+		break;
+	case 3:
+		if (lazerState == 0)
+		{
+			lazerScale += 10.0f;
+		}
+		else if (lazerState == 1)
+		{
+			lazerScale -= 1.0f;
+		}
+		if (lazerScale > 60.0f)
+		{
+			lazerState = 1;
+		}
+		if (lazerScale<0)
+		{
+			lazerScale = 0;
+		}
+
+		lazer->setVisible(true);
+		lazer->setAnchorPoint(Vec2(1.0f, 0.5f));
+		velocity = Vec2(0.0f, 0.0f);
+		lazer->setPosition(pos - Vec2(32.0f, 0.0f));
+		lazer->setScaleX(500.0f);
+		lazer->setScaleY(lazerScale);
+		break;
+	}
+	//avator->setPosition(pos);
+
+
+
+	player->setPosition(pos);
+	//player->setColor(Color3B(255-((timer/3.0f)*255) , 0, (timer/3.0f)*255));
+
+	
+
 }

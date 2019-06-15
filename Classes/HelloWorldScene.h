@@ -41,6 +41,27 @@ public:
 
 	//sprite
 	cocos2d::Sprite* avator;
+
+	cocos2d::Vec2 velocity;
+	cocos2d::Size visibleSize;
+	float speed;
+	float timer;
+
+	int movetype;
+
+
+	 int spriteSize;
+	//player
+	cocos2d::Sprite* player;
+
+	int playerframesize;
+	int nowframe;
+	int framePerSecend;
+
+	cocos2d::Sprite* lazer;
+	float lazerScale;
+	int lazerState;
+
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
 };
